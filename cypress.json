@@ -1,5 +1,7 @@
 {
     "projectId": "a72qq2",
-    "retries": 0
+    "retries": 0,
+    "pluginsFile": true,
+    "supportFile": true
 }
 
