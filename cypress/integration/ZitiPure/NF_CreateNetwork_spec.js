@@ -18,7 +18,6 @@ describe('NF LOGIN Test Suite', () => {
         cy.wait(2000)
         cy.get('#CreateButton').click()
         cy.wait(5000)
-        const networkname = 'Network5'
         cy.log(networkname)
         cy.get('#NavigationButton > .main').click()
         cy.get('#currentNetwork').click()
