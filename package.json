@@ -1,0 +1,17 @@
+{
+  "name": "cypressnfziti",
+  "version": "1.0.0",
+  "description": "zitiautomation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:open": "cypress open"
+  },
+  "author": "sivasajja",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^6.2.1",
+    "cypress-wait-until": "^1.7.1",
+    "cypress-xpath": "^1.6.1"
+  }
+}
