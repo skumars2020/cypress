@@ -4,7 +4,6 @@ describe('NF Network Test Suite', () => {
         cy.fixture('testdata').then(function (data) {
             this.data = data
         })
-
         cy.clearCookies()
         cy.visit('https://staging-nfconsole.io/login')
         cy.title().should('eq', 'NetFoundry: Login')
