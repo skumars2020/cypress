@@ -1,17 +1,26 @@
 
 describe('NF Network Test Suite', () => {
+    before('=====Login into website ====', () => {
+        cy.fixture('testdata').then(function (data) {
+            this.data = data
+        })
 
-    it('Test Case - 1 :: Verify NF Create Network', () => {
-        const random = randomizeInteger(5000, 700000);
         cy.clearCookies()
         cy.visit('https://staging-nfconsole.io/login')
         cy.title().should('eq', 'NetFoundry: Login')
-        cy.get('#tenantLabel').type('AMAZONORG').should('have.value', 'AMAZONORG')
+        cy.get('#tenantLabel').type('AMAZONORG').should('have.value', this.data.nf_org)
         cy.get('#LoginButton').click();
-        cy.get('[type="email"]').clear().type('siva.sajja@netfoundry.io').should('have.value', 'siva.sajja@netfoundry.io')
-        cy.get('[type="password"]').clear().type('Tata@2019').should('have.value', 'Tata@2019')
+        cy.get('[type="email"]').clear().type(this.data.email).should('have.value', this.data.email)
+        cy.get('[type="password"]').clear().type(this.data.password).should('have.value', this.data.password)
         cy.get('.auth0-lock-submit').click()
         cy.wait(5000)
+    })
+
+    after('=====Logout from website ====', () => {
+
+    })
+    it('Test Case - 1 :: Verify NF Create Network', () => {
+        const random = randomizeInteger(5000, 700000);
         const networkname = 'NewNetwork' + random
         cy.get('#NewNetworkName').clear().type(networkname).should('have.value', networkname)
         cy.wait(2000)
@@ -29,12 +38,12 @@ describe('NF Network Test Suite', () => {
             cy.log(text)
             if (text.includes(networkname)) {
                 checkStatus('#ItemsList >div>div:nth-child(4)', 'PROVISIONED', 500000).then(result => {
-                    cy.get('#ItemsList >div>div:nth-child(4)').each((item)=> {
-                      cy.wrap(item).should('have.text', 'PROVISIONED');
+                    cy.get('#ItemsList >div>div:nth-child(4)').each((item) => {
+                        cy.wrap(item).should('have.text', 'PROVISIONED');
                     });
                     // or
                     //expect(result).to.be(true);
-                  });
+                });
                 cy.get('#ItemsList >div>div:nth-child(4)').eq(index).then(function (NWstatus) {
                     const NetworkStatus = NWstatus.text().trim();
                     cy.log(NetworkStatus)
