@@ -1,25 +1,33 @@
 
 describe('NF Network Test Suite', () => {
+
+
+
     before('=====Login into website ====', () => {
-        cy.fixture('testdata').then(function (data) {
+        cy.fixture('testdata.json').then(function (data) {
             this.data = data
+            cy.clearCookies()
+            cy.visit('https://sandbox-nfconsole.io/login')
+            cy.title().should('eq', 'NetFoundry: Login')
+            cy.get('#tenantLabel').type('AMAZONORG').should('have.value', this.data.nf_org)
+            cy.get('#LoginButton').click();
+            cy.get('[type="email"]').clear().type(this.data.email).should('have.value', this.data.email)
+            cy.get('[type="password"]').clear().type(this.data.password).should('have.value', this.data.password)
+            cy.get('.auth0-lock-submit').click()
+            cy.wait(5000)
         })
-        cy.clearCookies()
-        cy.visit('https://staging-nfconsole.io/login')
-        cy.title().should('eq', 'NetFoundry: Login')
-        cy.get('#tenantLabel').type('AMAZONORG').should('have.value', this.data.nf_org)
-        cy.get('#LoginButton').click();
-        cy.get('[type="email"]').clear().type(this.data.email).should('have.value', this.data.email)
-        cy.get('[type="password"]').clear().type(this.data.password).should('have.value', this.data.password)
-        cy.get('.auth0-lock-submit').click()
-        cy.wait(5000)
     })
-
     after('=====Logout from website ====', () => {
-
+        cy.reload()
+        cy.wait(5000)
+        cy.get('.main[id="ProfileButton"]').click()
+        cy.get('.link[id="LogoutButton"]').click()
+        cy.get('.confirm[id="ConfirmActionLogout"]').click()
     })
+
     it('Test Case - 1 :: Verify NF Create Network', () => {
         const random = randomizeInteger(5000, 700000);
+
         const networkname = 'NewNetwork' + random
         cy.get('#NewNetworkName').clear().type(networkname).should('have.value', networkname)
         cy.wait(2000)
@@ -37,8 +45,9 @@ describe('NF Network Test Suite', () => {
             cy.log(text)
             if (text.includes(networkname)) {
                 checkStatus('#ItemsList >div>div:nth-child(4)', 'PROVISIONED', 500000).then(result => {
+                    cy.log("------------->" + result)
                     cy.get('#ItemsList >div>div:nth-child(4)').each((item) => {
-                        cy.wrap(item).should('have.text', 'PROVISIONED');
+                        cy.wrap(item).trim().should('have.text', 'PROVISIONED');
                     });
                     // or
                     //expect(result).to.be(true);
@@ -97,3 +106,5 @@ function checkStatus(selector, status, maxWait, alreadyWaited = 0) {
         return checkStatus(selector, status, maxWait, alreadyWaited);
     });
 }
+
+
