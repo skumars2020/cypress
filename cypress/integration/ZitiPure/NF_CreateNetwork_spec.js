@@ -1,4 +1,3 @@
-import 'cypress-wait-until'
 
 describe('NF LOGIN Test Suite', () => {
 
