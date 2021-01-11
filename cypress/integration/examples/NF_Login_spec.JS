@@ -9,6 +9,7 @@ describe('NF LOGIN Test Suite', () => {
         cy.get('[type="email"]').clear().type('siva.sajja@netfoundry.io').should('have.value', 'siva.sajja@netfoundry.io')
         cy.get('[type="password"]').clear().type('Tata@2019').should('have.value', 'Tata@2019')
         cy.get('.auth0-lock-submit').click()
+        cy.wait(5000)
         cy.get('#CloseButton > .buttonLabel').click()
         cy.get('.main[id="ProfileButton"]').click()
         cy.get('.link[id="LogoutButton"]').click()

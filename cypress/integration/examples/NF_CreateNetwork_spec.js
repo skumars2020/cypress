@@ -12,13 +12,13 @@ describe('NF LOGIN Test Suite', () => {
         cy.get('[type="email"]').clear().type('siva.sajja@netfoundry.io').should('have.value', 'siva.sajja@netfoundry.io')
         cy.get('[type="password"]').clear().type('Tata@2019').should('have.value', 'Tata@2019')
         cy.get('.auth0-lock-submit').click()
-        //cy.wait(5000)
+        cy.wait(5000)
         const networkname = 'NewNetwork' + random
         cy.get('#NewNetworkName').clear().type(networkname).should('have.value', networkname)
-        //cy.wait(2000)
+        cy.wait(2000)
         cy.get('#CreateButton').click()
         cy.wait(5000)
-        //const networkname = 'Network5'
+        const networkname = 'Network5'
         cy.log(networkname)
         cy.get('#NavigationButton > .main').click()
         cy.get('#currentNetwork').click()
