@@ -32,42 +32,23 @@ describe('NF LOGIN Test Suite', () => {
                     const NetworkStatus = NWstatus.text()
                     cy.log(NetworkStatus)
                     let requestStarted = false;
-                    //should('have.value', 'Homer')
-                    //cy.get('#ItemsList >div>div:nth-child(4)').should('have.not.value', 'ERROR')
-                    //cy.get('#ItemsList >div>div:nth-child(4)', { timeout: 60000 }).contains('ERROR')
                     cy.wait('#ItemsList >div>div:nth-child(4)')
+                    cy.get('#ItemsList >div>div:nth-child(4)').should('have.not.value', 'ERROR')
                     cy.waitUntil(() =>
                         cy.get('#ItemsList >div>div:nth-child(4)')
                             .should('be.visible')
                             .contains('PROVISIONED')
                             .then(() => expect(NetworkStatus).to.contains('PROVISIONED'))
-                        //.then(() => requestStarted === true)
                         , {
                             timeout: 90000,
                             interval: 1000,
-                            errorMsg: 'PROVISIONED not sent `enter code here`within time limit'
+                            errorMsg: 'Network was not in PROVISIONED state '
                         })
-
-                    /* cy.waitUntil(() => cy.get('#ItemsList >div>div:nth-child(4)').contains('PROVISIONED').then(win => win.foo === "PROVISIONED"), {
-                            errorMsg: 'This is a custom error message', // overrides the default error message
-                              timeout: 5000, // waits up to 2000 ms, default to 5000
-                             interval: 500 // performs the check every 500 ms, default to 200
-                          }); */
-
-                    /* cy.get('#ItemsList >div>div:nth-child(4)').contains('PROVISIONING').catch((err) => {
-                             cy.reload();
-                             cy.wait(5000);
-                             if (cy.get('#ItemsList >div>div:nth-child(4)').contains('PROVISIONED')) {
-                                 cy.log('Came to if loop ==========>');
-                             }
- 
-                         }) */
-                        
                     expect(NetworkStatus).to.contains('PROVISIONED')
                 })
             }
         })
-        
+
 
     })
 })
@@ -84,4 +65,31 @@ function randomizeInteger(min, max) {
         throw new Error("Incorrect arguments.");
     }
     return min + Math.floor((max - min) * Math.random());
+}
+
+function checkStatus(selector, status, maxWait, alreadyWaited = 0) {
+    const waitTime = 500;
+    // cy.get returns a thenebale
+    return cy.get(selector).each((item) => {
+        // it checks the text right now, without unnecessary waitings
+        if (!item.text() === status) {
+            return false;
+        }
+        return true;
+    }).then(result => {
+        if (result) {
+            // only when the condition passes it returns a resolving promise
+            return Promise.resolve(true);
+        }
+        // waits for a fixed milliseconds amount
+        cy.reload();
+        cy.wait(waitTime);
+        alreadyWaited++;
+        // the promise will be resolved with false if the wait last too much
+        if (waitTime * alreadyWaited > maxWait) {
+            return Promise.reject(new Error('Awaiting timeout'))
+        }
+        // returns the same function recursively, the next `.then()` will be the checkColor function itself
+        return checkColor(selector, status, maxWait, alreadyWaited);
+    });
 }
