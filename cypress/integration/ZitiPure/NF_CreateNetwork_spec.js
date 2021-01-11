@@ -7,7 +7,7 @@ describe('NF LOGIN Test Suite', () => {
         cy.visit('https://sandbox-nfconsole.io/login')
         cy.title().should('eq', 'NetFoundry: Login')
         cy.get('#tenantLabel').type('AMAZONORG').should('have.value', 'AMAZONORG')
-        cy.get('#LoginButton').click()
+        cy.get('#LoginButton').click();
         cy.get('[type="email"]').clear().type('siva.sajja@netfoundry.io').should('have.value', 'siva.sajja@netfoundry.io')
         cy.get('[type="password"]').clear().type('Tata@2019').should('have.value', 'Tata@2019')
         cy.get('.auth0-lock-submit').click()
@@ -90,6 +90,6 @@ function checkStatus(selector, status, maxWait, alreadyWaited = 0) {
             return Promise.reject(new Error('Awaiting timeout'))
         }
         // returns the same function recursively, the next `.then()` will be the checkColor function itself
-        return checkColor(selector, status, maxWait, alreadyWaited);
+        return checkStatus(selector, status, maxWait, alreadyWaited);
     });
 }
