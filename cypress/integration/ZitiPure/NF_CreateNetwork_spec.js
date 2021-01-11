@@ -1,10 +1,10 @@
 
-describe('NF LOGIN Test Suite', () => {
+describe('NF Network Test Suite', () => {
 
-    it('Verify NF Create Network test case', () => {
+    it('Test Case - 1 :: Verify NF Create Network', () => {
         const random = randomizeInteger(5000, 700000);
         cy.clearCookies()
-        cy.visit('https://sandbox-nfconsole.io/login')
+        cy.visit('https://staging-nfconsole.io/login')
         cy.title().should('eq', 'NetFoundry: Login')
         cy.get('#tenantLabel').type('AMAZONORG').should('have.value', 'AMAZONORG')
         cy.get('#LoginButton').click();
@@ -28,22 +28,18 @@ describe('NF LOGIN Test Suite', () => {
             const text = $ele.text()
             cy.log(text)
             if (text.includes(networkname)) {
+                checkStatus('#ItemsList >div>div:nth-child(4)', 'PROVISIONED', 500000).then(result => {
+                    cy.get('#ItemsList >div>div:nth-child(4)').each((item)=> {
+                      cy.wrap(item).should('have.text', 'PROVISIONED');
+                    });
+                    // or
+                    //expect(result).to.be(true);
+                  });
                 cy.get('#ItemsList >div>div:nth-child(4)').eq(index).then(function (NWstatus) {
-                    const NetworkStatus = NWstatus.text()
+                    const NetworkStatus = NWstatus.text().trim();
                     cy.log(NetworkStatus)
-                    let requestStarted = false;
                     cy.wait('#ItemsList >div>div:nth-child(4)')
                     cy.get('#ItemsList >div>div:nth-child(4)').should('have.not.value', 'ERROR')
-                    cy.waitUntil(() =>
-                        cy.get('#ItemsList >div>div:nth-child(4)')
-                            .should('be.visible')
-                            .contains('PROVISIONED')
-                            .then(() => expect(NetworkStatus).to.contains('PROVISIONED'))
-                        , {
-                            timeout: 90000,
-                            interval: 1000,
-                            errorMsg: 'Network was not in PROVISIONED state '
-                        })
                     expect(NetworkStatus).to.contains('PROVISIONED')
                 })
             }
@@ -68,11 +64,11 @@ function randomizeInteger(min, max) {
 }
 
 function checkStatus(selector, status, maxWait, alreadyWaited = 0) {
-    const waitTime = 500;
+    const waitTime = 5000;
     // cy.get returns a thenebale
     return cy.get(selector).each((item) => {
         // it checks the text right now, without unnecessary waitings
-        if (!item.text() === status) {
+        if (!item.text().trim() === status) {
             return false;
         }
         return true;
@@ -89,7 +85,7 @@ function checkStatus(selector, status, maxWait, alreadyWaited = 0) {
         if (waitTime * alreadyWaited > maxWait) {
             return Promise.reject(new Error('Awaiting timeout'))
         }
-        // returns the same function recursively, the next `.then()` will be the checkColor function itself
+        // returns the same function recursively, the next `.then()` will be the status function itself
         return checkStatus(selector, status, maxWait, alreadyWaited);
     });
 }
