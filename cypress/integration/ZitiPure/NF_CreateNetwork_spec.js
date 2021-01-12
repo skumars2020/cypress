@@ -17,6 +17,7 @@ describe('NF Network Test Suite', () => {
             cy.wait(5000)
         })
     })
+    
     after('=====Logout from website ====', () => {
         cy.reload()
         cy.wait(5000)
